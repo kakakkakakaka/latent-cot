@@ -1,0 +1,45 @@
+# Fresh start training config for GSM8K Coconut with Qwen3-4B-Instruct
+# Using corrected iCoT data (with full reasoning steps)
+# Training only 1 epoch to test if accuracy improves
+
+project: coconut
+save_path: /tmp/checkpoints
+name: gsm8k-coconut-qwen3-a100-fresh
+
+only_eval: False
+
+coconut: True
+cot: False
+no_thoughts: False
+no_cot: False
+
+c_thought: 2
+epochs_per_stage: 2
+max_latent_stage: 3
+pad_latent_to_max: True
+
+save_only_improve: False
+uniform_prob: 0.0
+model_id: Qwen/Qwen3-4B-Instruct-2507
+# Fresh start: Load directly from base model (not from previous checkpoint)
+load_model_path: "None"
+seed: 0
+resume: 0  # Start from epoch 0 (fresh start)
+bf16: True
+train_path: data/gsm8k_train.json  # Corrected iCoT data with full reasoning steps
+val_path: data/gsm8k_validation.json
+reset_optimizer: True
+
+# A100 80GB configuration
+batch_size_training: 16
+debug: False
+gradient_accumulation_steps: 6  # Effective batch = 18*6 = 108
+max_seq_length: 512
+num_epochs: 1  # Only 1 epoch to test
+lr: 0.00001  # Small LR to preserve Qwen3 capabilities
+weight_decay: 0.01
+
+# Validation: use subset for faster evaluation (after first epoch test)
+# First epoch uses full set, subsequent epochs use 400 samples
+eval_subset_size: 0  # 0 = use full validation set (first epoch only)
+
